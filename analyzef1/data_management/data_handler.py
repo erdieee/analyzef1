@@ -9,7 +9,7 @@ from fastf1.core import Laps
 logger = logging.getLogger(__name__)
 cachefolder = f'{Path().resolve()}/cache'
 
-#Path(cachefolder).mkdir(parents=True, exist_ok=True) 
+Path(cachefolder).mkdir(parents=True, exist_ok=True) 
 ff1.Cache.enable_cache(cachefolder)
 logger.info(f'Using cache folder: {cachefolder}')
 
