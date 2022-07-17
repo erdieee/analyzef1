@@ -165,12 +165,9 @@ class Analysis:
         fig, ax = plt.subplots(sharex=True, sharey=True, figsize=(12, 6.75))
         fig.suptitle(f'{event_name} {session.event.year} - {driver} - Speed', size=24, y=0.97)
 
-        # Adjust margins and turn of axis
         plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.12)
         ax.axis('off')
 
-
-        # After this, we plot the data itself.
         # Create background track line
         ax.plot(lap.telemetry['X'], lap.telemetry['Y'], color='black', linestyle='-', linewidth=16, zorder=0)
 
@@ -184,8 +181,7 @@ class Analysis:
         # Merge all line segments together
         line = ax.add_collection(lc)
 
-
-        # Finally, we create a color bar as a legend.
+        # Create a color bar as a legend.
         cbaxes = fig.add_axes([0.25, 0.05, 0.5, 0.05])
         normlegend = mpl.colors.Normalize(vmin=color.min(), vmax=color.max())
         legend = mpl.colorbar.ColorbarBase(cbaxes, norm=normlegend, cmap=colormap, orientation="horizontal")
@@ -199,8 +195,8 @@ class Analysis:
         laps_driver_2 = laps.pick_driver(drivers[1])
         laps_driver_1['RaceLapNumber'] = laps_driver_1['LapNumber'] - 1
         laps_driver_2['RaceLapNumber'] = laps_driver_2['LapNumber'] - 1
-        lap_telemetry_driver_1 = laps_driver_1.loc[laps_driver_1['RaceLapNumber']==4].get_car_data().add_distance()
-        lap_telemetry_driver_2 = laps_driver_2.loc[laps_driver_2['RaceLapNumber']==4].get_car_data().add_distance()
+        lap_telemetry_driver_1 = laps_driver_1.loc[laps_driver_1['RaceLapNumber']==lapnumber].get_car_data().add_distance()
+        lap_telemetry_driver_2 = laps_driver_2.loc[laps_driver_2['RaceLapNumber']==lapnumber].get_car_data().add_distance()
         plt.rcParams['figure.figsize'] = [15, 15]
         fig, ax = plt.subplots(4)
         fig.suptitle(f"Lap {lapnumber} Telemetry Comparison between {drivers[0]} and {drivers[1]}")

@@ -33,6 +33,9 @@ class DataHandler:
     def get_session(self):
         return self.session
 
+    def get_max_lap_number(self):
+        return max(self.session.laps['LapNumber'])
+
     def get_fastest_lap(self):
         return self.session.laps.pick_fastest()
 
