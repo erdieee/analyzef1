@@ -94,17 +94,24 @@ class AnalyzeF1UI:
             if display_switcher == 'Driver Color Map':
                 driver_select = st.sidebar.selectbox('Select Driver', get_driver_abbreviation(DRIVER_TEAM_MAPPING))
                 st.write(driver_select)
-                st.write(self.analysis.driver_colormap_map(driver_select))
+                try:
+                    st.write(self.analysis.driver_colormap_map(driver_select))
+                except:
+                    st.write("No Data available...")
+
             if display_switcher == 'Driver Telemetry Comparison':
                 col1, col2 = st.sidebar.columns(2)
                 driver_1 = col1.selectbox('First Driver', get_driver_abbreviation(DRIVER_TEAM_MAPPING))
                 driver_2 = col2.selectbox('Second Driver', get_driver_abbreviation(DRIVER_TEAM_MAPPING), index = 1)
                 drivers_list = [driver_1, driver_2]
                 max_lap_number = self.datahanlder.get_max_lap_number()
-                lapnumber = st.sidebar.slider(label = 'Select Lap', min_value = 1, max_value = max_lap_number, value = 1)
+                lapnumber = st.sidebar.slider(label = 'Select Lap', min_value = 1, max_value = int(max_lap_number), value = 1)
                 st.write(max_lap_number)
-                st.write(self.analysis.compare_2_drv_lap(drivers_list, lapnumber))
-            
+                try:
+                    st.write(self.analysis.compare_2_drv_lap(drivers_list, lapnumber))
+                except:
+                    st.write("Data not available for both drivers...")
+                          
         if lap_switcher == 'All Laps':
             st.write(self.analysis.boxplot_drivers_laps())
             st.write(self.analysis.plot_drivers_fastest_laps())
