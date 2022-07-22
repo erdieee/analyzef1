@@ -10,7 +10,7 @@ function final_message() {
     echo_block "Run the script !"
     echo "You can now use the script by executing:"
     echo "'source .env/bin/activate; python3 analyzef1' or"
-    echo "'source .env/bin/activate; python3 analyzef1/main.py'"
+    echo "'source .env/bin/activate; python3 -m streamlit run analyzef1/main.py'"
 }
 
 function check_installed_pip() {

@@ -1,4 +1,3 @@
-from datetime import datetime
 import logging
 from typing import List
 import matplotlib as mpl
@@ -14,19 +13,18 @@ import fastf1
 import fastf1.plotting
 from fastf1.core import Laps
 
-from analyzef1.data_management import data_handler
-
 logger = logging.getLogger(__name__)
 
-class Analysis:
+class Plotter:
     """
     Class responsable for creating all graphics
     """
-    def __init__(self, data_handler) -> None:
+    def __init__(self, data_handler, session) -> None:
         self.data_handler = data_handler
+        self.session = session
 
     def plot_drivers_fastest_laps(self):
-        session = self.data_handler.get_session()
+        session = self.session
         drivers = pd.unique(session.laps['Driver'])
         list_fastest_laps = list()
         team_colors = list()
@@ -60,7 +58,7 @@ class Analysis:
     
     def boxplot_drivers_laps(self):
         laps = self.data_handler.get_drivers_laps()
-        session = self.data_handler.get_session()
+        session = self.session
         eventname = session.event['EventName']
         driver_laps = []
         driver = []
@@ -97,7 +95,7 @@ class Analysis:
 
     def racepace_laps(self):
         laps = self.data_handler.get_drivers_laps()
-        session = self.data_handler.get_session()
+        session = self.session
         eventname = session.event['EventName']
         driver_name = []
         length_race = []
@@ -151,7 +149,7 @@ class Analysis:
         return fig
 
     def driver_colormap_map(self, driver: str):
-        session = self.data_handler.get_session()
+        session = self.session
         colormap = mpl.cm.plasma
         event_name = session.event['EventName']
         lap = session.laps.pick_driver(driver).pick_fastest()
@@ -189,7 +187,7 @@ class Analysis:
         return fig
 
     def compare_2_drv_lap(self, drivers: List, lapnumber: int):
-        session = self.data_handler.get_session()
+        session = self.session
         laps = session.load_laps(with_telemetry=True)
         laps_driver_1 = laps.pick_driver(drivers[0])
         laps_driver_2 = laps.pick_driver(drivers[1])
@@ -217,13 +215,14 @@ class Analysis:
         ax[3].plot(lap_telemetry_driver_1['Distance'], lap_telemetry_driver_1['DRS'], label=drivers[0])
         ax[3].plot(lap_telemetry_driver_2['Distance'], lap_telemetry_driver_2['DRS'], label=drivers[1])
         ax[3].set(ylabel='DRS')
+        ax[3].set(xlabel='Distance [m]')
 
+        # Set Ticks Distance to 500m, grid visible
+        for i in range(len(ax)):
+            ax[i].set(xticks =np.arange(0, max(lap_telemetry_driver_1['Distance']), 500) )
+            ax[i].grid(visible = True)
         # Hide x labels and tick labels for top plots and y ticks for right plots.
         for a in ax.flat:
             a.label_outer()
-        ax[0].grid(visible = True)
-        ax[1].grid(visible = True)
-        ax[2].grid(visible = True)
-        ax[3].grid(visible = True)
 
         return fig

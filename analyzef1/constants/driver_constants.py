@@ -1,12 +1,3 @@
-YEAR = [2018, 2019, 2020, 2021, 2022]
-LOCATION = ['Sakhir', 'Jeddah', 'Melbourne', 'Imola', 'Miami', 'Barcelona', 'Monaco', 'Baku', 'Montréal', 'Silverstone', 'Spielberg', 'Le Castellet', 'Budapest', 'Spa-Francorchamps', 'Zandvoort', 'Monza', 'Marina Bay', 'Suzuka', 'Austin', 'Mexico City', 'São Paulo', 'Yas Island']
-SESSION = ['FP1', 'FP2', 'FP3', 'Q', 'S', 'SQ', 'R']
-
-CHOOSE_SESSION = ['Year', 'Location', 'Session']
-
-
-UINAVBAR = ['Upcoming Events', 'Leaderboard', 'Previous Events']
-
 DRIVER_TEAM_MAPPING = {
     # only necessary when loading live timing data that does not include
     # the driver and team listing and no data is available on ergast yet
