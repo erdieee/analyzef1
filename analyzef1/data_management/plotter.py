@@ -1,17 +1,17 @@
 import logging
 from typing import List
+
+import fastf1
+import fastf1.plotting
 import matplotlib as mpl
-from matplotlib.collections import LineCollection
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from fastf1.core import Laps
+from matplotlib.collections import LineCollection
 from scipy.interpolate import make_interp_spline
 from timple.timedelta import strftimedelta
-
-import fastf1
-import fastf1.plotting
-from fastf1.core import Laps
 
 logger = logging.getLogger(__name__)
 
@@ -148,7 +148,7 @@ class Plotter:
         
         return fig
 
-    def driver_colormap_map(self, driver: str):
+    def colormap_map_speed(self, driver: str):
         session = self.session
         colormap = mpl.cm.plasma
         event_name = session.event['EventName']
@@ -184,6 +184,37 @@ class Plotter:
         normlegend = mpl.colors.Normalize(vmin=color.min(), vmax=color.max())
         legend = mpl.colorbar.ColorbarBase(cbaxes, norm=normlegend, cmap=colormap, orientation="horizontal")
 
+        return fig
+
+    def colormap_map_gear_shifts(self, driver: str):
+        session = self.session
+        event_name = session.event['EventName']
+        lap = session.laps.pick_driver(driver).pick_fastest()
+        tel = lap.get_telemetry()
+
+        x = np.array(tel['X'].values)
+        y = np.array(tel['Y'].values)
+        points = np.array([x, y]).T.reshape(-1, 1, 2)
+        segments = np.concatenate([points[:-1], points[1:]], axis=1)
+        gear = tel['nGear'].to_numpy().astype(float)
+
+        colormap = mpl.cm.get_cmap('Paired')
+
+        fig, ax = plt.subplots(sharex=True, sharey=True, figsize=(12, 6.75))
+        fig.suptitle(f'{event_name} {session.event.year} - {driver} - Gear Shift', size=24, y=0.97)
+        plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.12)
+        ax.axis('off')
+
+        # Create background track line
+        ax.plot(tel['X'], tel['Y'], color='black', linestyle='-', linewidth=12, zorder=0)
+        # Create a continuous norm to map from data points to colors
+        norm = plt.Normalize(1, colormap.N+1)
+        lc = LineCollection(segments, cmap=colormap, norm=norm, linestyle='-', linewidth=5)
+        lc.set_array(gear)
+        line = ax.add_collection(lc)
+        cbar = fig.colorbar(lc, label="Gear", boundaries=np.arange(1, 10), location = 'bottom', shrink=0.6)
+        cbar.set_ticks(np.arange(1.5, 9.5))
+        cbar.set_ticklabels(np.arange(1, 9))
         return fig
 
     def compare_2_drv_lap(self, drivers: List, lapnumber: int):

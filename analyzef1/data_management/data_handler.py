@@ -1,11 +1,12 @@
 import logging
-import pandas as pd
 from datetime import datetime
 from pathlib import Path
 from typing import Dict
 
 import fastf1 as ff1
+import pandas as pd
 from fastf1.core import Laps
+
 
 logger = logging.getLogger(__name__)
 cachefolder = f'{Path().resolve()}/cache'
