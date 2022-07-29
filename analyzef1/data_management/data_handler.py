@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+from datetime import datetime
 from pathlib import Path
 from typing import Dict
 
@@ -34,7 +35,7 @@ class DataHandler:
         return self.session
 
     def get_max_lap_number(self):
-        return max(self.session.laps['LapNumber'])
+        return int(max(self.session.laps['LapNumber']))
 
     def get_fastest_lap(self):
         return self.session.laps.pick_fastest()
@@ -60,7 +61,7 @@ class DataHandler:
 
     @staticmethod
     def get_upcoming_events():
-        df = ff1.get_event_schedule(2022)
+        df = ff1.get_event_schedule(datetime.now().year)
         filter_upcoming = df['EventDate'] > pd.to_datetime('today')
         past_events = df.loc[~filter_upcoming]
         df = df.loc[filter_upcoming]
