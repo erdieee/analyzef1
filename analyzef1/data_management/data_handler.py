@@ -1,10 +1,12 @@
 import logging
-import pandas as pd
+from datetime import datetime
 from pathlib import Path
 from typing import Dict
 
 import fastf1 as ff1
+import pandas as pd
 from fastf1.core import Laps
+
 
 logger = logging.getLogger(__name__)
 cachefolder = f'{Path().resolve()}/cache'
@@ -18,9 +20,7 @@ class DataHandler:
     Class responsable for getting and manipulating data
     """
     def __init__(self, data: Dict) -> None:
-        self.cache = ff1.Cache.enable_cache(cachefolder)
-        self.data = data
-        self.session = self._get_session(self.data)
+        self.session = self._get_session(data)
 
     def _get_session(self, data: dict):
         session = ff1.get_session(data['year'], data['location'], data['event'])
@@ -34,7 +34,7 @@ class DataHandler:
         return self.session
 
     def get_max_lap_number(self):
-        return max(self.session.laps['LapNumber'])
+        return int(max(self.session.laps['LapNumber']))
 
     def get_fastest_lap(self):
         return self.session.laps.pick_fastest()
@@ -60,7 +60,7 @@ class DataHandler:
 
     @staticmethod
     def get_upcoming_events():
-        df = ff1.get_event_schedule(2022)
+        df = ff1.get_event_schedule(datetime.now().year)
         filter_upcoming = df['EventDate'] > pd.to_datetime('today')
         past_events = df.loc[~filter_upcoming]
         df = df.loc[filter_upcoming]
