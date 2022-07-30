@@ -20,9 +20,7 @@ class DataHandler:
     Class responsable for getting and manipulating data
     """
     def __init__(self, data: Dict) -> None:
-        self.cache = ff1.Cache.enable_cache(cachefolder)
-        self.data = data
-        self.session = self._get_session(self.data)
+        self.session = self._get_session(data)
 
     def _get_session(self, data: dict):
         session = ff1.get_session(data['year'], data['location'], data['event'])

@@ -1,1 +1,0 @@
-from analyzef1.ui.ui import AnalyzeF1UI
