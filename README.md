@@ -9,6 +9,7 @@ For all the F1 nerds. Compare and visualize telemetry data between drivers.
 - [pip](https://pip.pypa.io/en/stable/installing/)
 - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [virtualenv](https://virtualenv.pypa.io/en/stable/installation.html) (Recommended)
+
 It is recommended to install a python version 3.8 or 3.9 since *Analyze F1* relies on the python package [FastF1](https://github.com/theOehrly/Fast-F1) to gather data, where full functionalities are only avaiable on those python versions.
 
 ### Installation
@@ -23,7 +24,7 @@ cd analyzef1
 # --install, Install analyzef1 from scratch
 ./setup.sh -i
 ```
-To update to new changes in the futures run
+To update to new changes in the future run
 ```
 # --update
 ./setup.sh -u
