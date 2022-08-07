@@ -9,6 +9,8 @@ from typing import Any, List
 
 import streamlit as st
 
+from utils import set_page_config
+
 logger = logging.getLogger('analyzef1')
 
 LOGFORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -16,19 +18,13 @@ logging.basicConfig(level=logging.INFO, format=LOGFORMAT)
 logger.info('Starting analyzef1 ...')
 
 def main() -> None:
-    st.set_page_config(
-            page_title = "AnalyzeF1",
-            page_icon = ":bar_chart:",
-            layout = "wide"
-        )
-    hide_streamlit_style = """
-        <style>
-        footer {visibility: hidden;}
-        </style>
-        """
-    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-    st.image(f"{Path().resolve()}/images/background/backgroundcrop.jpeg")
-    st.title("Analyze F1 🏎️")
+    set_page_config()
+    col1, col2 = st.columns([2,2])
+    col1.image(f"{Path().resolve()}/images/background/backgroundcrop.jpeg")
+    col2.title("Analyze F1 🏎️")
+    col2.write('For all the F1 appassionates.')
+    st.markdown('---')
+    
     
 if __name__ == "__main__": 
     main()

@@ -33,7 +33,7 @@ To update to new changes in the future run
 ### Run the script
 Whenever you want to run the script you need to activate the virtual enviroment first.
 ```
-# activate your virtual enviroment
+# activate your virtual enviroment (in Windows: .env/Scripts/activate.bat)
 source .env/bin/activate
 # run it
 python3 analyzef1
