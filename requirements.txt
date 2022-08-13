@@ -2,6 +2,6 @@ fastf1==2.2.9
 matplotlib==3.5.2
 numpy==1.23.1
 pandas==1.4.3
-scipy==1.8.1
+scipy==1.9.0
 streamlit==1.11.1
 streamlit-option-menu==0.3.2
