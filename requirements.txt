@@ -2,7 +2,7 @@
 fastf1==2.2.9
 
 # Data handeling
-matplotlib==3.5.2
+matplotlib==3.5.3
 numpy==1.23.1
 pandas==1.4.3
 scipy==1.9.0
