@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict, List, Tuple
 
 import fastf1 as ff1
 import pandas as pd
@@ -27,16 +27,28 @@ class DataHandler:
         session.load()
         return session
 
-    def get_laps(self):
-        return self.session.laps
-
+    @property
     def get_session(self):
         return self.session
 
+    @property
+    def get_laps(self):
+        return self.session.laps
+
+    @property
+    def get_weather_data(self):
+        return self.session.weather_data
+
+    @property
+    def get_session_results(self):
+        return self.session.results
+
+    @property
     def get_max_lap_number(self):
         return int(max(self.session.laps['LapNumber']))
 
-    def get_fastest_lap(self):
+    @property
+    def get_fastest_lap(self) -> List[Any]:
         return self.session.laps.pick_fastest()
 
     def get_drivers_fastest_lap(self):
@@ -59,13 +71,21 @@ class DataHandler:
         return list_laps
 
     @staticmethod
-    def get_upcoming_events():
+    def get_upcoming_events(type: str = None):
         df = ff1.get_event_schedule(datetime.now().year)
         filter_upcoming = df['EventDate'] > pd.to_datetime('today')
         past_events = df.loc[~filter_upcoming]
         df = df.loc[filter_upcoming]
         df.drop(columns='F1ApiSupport', inplace=True)
         df.set_index('EventDate', inplace=True)
+        past_events.drop(columns='F1ApiSupport', inplace=True)
+        past_events.set_index('EventDate', inplace=True)
         next_event = df.head(1)
-        upcoming_event = df.tail(df.shape[0] -1)
+        upcoming_event = df.tail(df.shape[0] - 1)
+        if type == 'next':
+            return next_event
+        if type == 'upcoming':
+            return upcoming_event
+        if type == 'past':
+            return past_events
         return next_event, upcoming_event, past_events

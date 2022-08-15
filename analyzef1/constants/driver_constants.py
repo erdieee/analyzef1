@@ -44,3 +44,16 @@ DRIVER_TEAM_MAPPING = {
     '24': {'Abbreviation': 'ZHO', 'FirstName': 'Guanyu',
            'LastName': 'Zhou', 'TeamName': 'Alfa Romeo'}
 }
+
+TEAMS = [
+       'Alfa Romeo',
+       'AlphaTauri',
+       'Alpine F1 Team',
+       'Aston Martin',
+       'Ferrari',
+       'Haas F1 Team',
+       'McLaren',
+       'Mercedes',
+       'Red Bull',
+       'Williams' 
+]

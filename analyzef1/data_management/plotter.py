@@ -10,7 +10,6 @@ import pandas as pd
 import numpy as np
 from fastf1.core import Laps
 from matplotlib.collections import LineCollection
-from scipy.interpolate import make_interp_spline
 from timple.timedelta import strftimedelta
 
 logger = logging.getLogger(__name__)
@@ -106,24 +105,8 @@ class Plotter:
             laptime['LapTimeInSeconds'] = laptime['LapTime'].dt.total_seconds()
             laptime['PitOutTimeInSeconds'] = laptime['PitOutTime'].dt.total_seconds()
             laptime = laptime.reset_index()
-            #smooth outliers
-            for index in range(len(laptime.loc[:,'LapTimeInSeconds'])):
-                if (
-                        (np.isnan(laptime.loc[index,'LapTimeInSeconds'])) or 
-                        (
-                            (laptime.loc[index,'TrackStatus'] != 1) and
-                            (laptime.loc[index,'TrackStatus'] != 2)
-                        )
-                    ):
-                    #laptime.drop(index=index, inplace=True)
-                    
-                    median_laps = np.mean(laptime.loc[:,'LapTimeInSeconds'])
-                    std_laps = np.std(laptime.loc[:,'LapTimeInSeconds'])
-                    valid_laps = [e for e in laptime.loc[:,'LapTimeInSeconds'] if median_laps - 1*std_laps < e < median_laps + 1*std_laps]
-                    valids = laptime.loc[:,'LapTimeInSeconds'].interpolate(method='cubic')
-                    laptime.loc[index,'LapTimeInSeconds'] = np.mean(valid_laps)
-                
-            length_race.append(laptime.loc[:,'LapTimeInSeconds'].interpolate(method='cubic'))
+            laptime['LapTimeMean'] = laptime['LapTimeInSeconds'].rolling(25, center=True, min_periods=1).mean()
+            length_race.append(laptime.loc[:,'LapTimeMean'])
             race_numbers.append(laptime['LapNumber'])
             driver_name.append(laptime['Driver'].iloc[0])
             team_colors.append(fastf1.plotting.team_color(laptime['Team'].iloc[0]))
@@ -132,12 +115,6 @@ class Plotter:
         x = []
         y = []
         for i in range(len(length_race)):
-            #x_new = np.linspace((race_numbers)[i].min(), (race_numbers)[i].max(), 100) 
-            #spl = make_interp_spline((race_numbers)[i], (length_race)[i], k=3)
-            #y_smooth = spl(x_new)
-            #print('x_new: ', x_new)
-            #x.append(np.array(x_new))
-            #y.append(np.array(y_smooth))
             x.append(np.array(race_numbers)[i])
             y.append(np.array(length_race)[i])
         for i in range(len(x)):
