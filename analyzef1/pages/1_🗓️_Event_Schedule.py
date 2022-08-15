@@ -6,6 +6,7 @@ import streamlit as st
 from analyzef1.data_management import DataHandler
 from utils import set_page_config
 
+
 logger = logging.getLogger(__name__)
 
 def app() -> None:
@@ -14,7 +15,7 @@ def app() -> None:
     logger.info(f'Currently in page {__file__}')
 
     next_event, upcoming_events, past_events = DataHandler.get_upcoming_events()
-    event_schedule = st.tabs(['Next Event', 'Upcoming Event', 'Previous Events'])
+    event_schedule = st.tabs(['Next Event', 'Upcoming Events', 'Previous Events'])
 
     with event_schedule[0]:
         st.write("Next Event")

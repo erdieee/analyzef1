@@ -15,16 +15,17 @@ logger = logging.getLogger('analyzef1')
 
 LOGFORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(level=logging.INFO, format=LOGFORMAT)
-logger.info('Starting analyzef1 ...')
 
 def main() -> None:
     set_page_config()
+    logger.info('Showing Home Page')
     col1, col2 = st.columns([2,2])
     col1.image(f"{Path().resolve()}/images/background/backgroundcrop.jpeg")
     col2.title("Analyze F1 🏎️")
     col2.write('For all the F1 appassionates.')
     st.markdown('---')
-    
+    st.write('Just a math student enjoying data')
+
     
 if __name__ == "__main__": 
     main()

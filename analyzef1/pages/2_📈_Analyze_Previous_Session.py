@@ -1,9 +1,14 @@
+import logging 
 from typing import Dict
+
 import streamlit as st
 
 from analyzef1.constants import CHOOSE_SESSION ,DRIVER_TEAM_MAPPING, NAVBAR, YEAR, LOCATION, SESSION
 from analyzef1.data_management import DataHandler, Plotter
 from utils import get_driver_abbreviation, set_page_config
+
+
+logger = logging.getLogger(__name__)
 
 def choose_session() -> Dict:
     col1, col2, col3 = st.columns(3)
@@ -74,6 +79,5 @@ def app() -> None:
         st.write(plotter.boxplot_drivers_laps())
         st.write(plotter.plot_drivers_fastest_laps())
         st.write(plotter.racepace_laps())
-
 
 app()

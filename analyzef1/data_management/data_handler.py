@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict, List, Tuple
 
 import fastf1 as ff1
 import pandas as pd
@@ -40,11 +40,15 @@ class DataHandler:
         return self.session.weather_data
 
     @property
+    def get_session_results(self):
+        return self.session.results
+
+    @property
     def get_max_lap_number(self):
         return int(max(self.session.laps['LapNumber']))
 
     @property
-    def get_fastest_lap(self):
+    def get_fastest_lap(self) -> List[Any]:
         return self.session.laps.pick_fastest()
 
     def get_drivers_fastest_lap(self):

@@ -1,6 +1,11 @@
+import logging
+
 import streamlit as st
 
 from utils import set_page_config
+
+
+logger = logging.getLogger(__name__)
 
 def app() -> None:
     set_page_config()

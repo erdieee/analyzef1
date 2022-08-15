@@ -10,7 +10,6 @@ import pandas as pd
 import numpy as np
 from fastf1.core import Laps
 from matplotlib.collections import LineCollection
-from scipy.interpolate import make_interp_spline
 from timple.timedelta import strftimedelta
 
 logger = logging.getLogger(__name__)
