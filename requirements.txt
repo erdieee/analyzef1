@@ -9,5 +9,5 @@ scipy==1.9.1
 SQLAlchemy==1.4.41
 
 # User interface
-streamlit==1.13.0
+streamlit==1.14.1
 streamlit-option-menu==0.3.2
