@@ -10,4 +10,4 @@ SQLAlchemy
 
 # User interface
 streamlit
--e git+https://github.com/erdieee/analyzef1.git@cbb22a3b669ec3ec8091650943f2da3e9465ede7#egg=analyzef1
+-e .
