@@ -1,13 +1,13 @@
 # F1 data
-fastf1==2.3.0
+fastf1
 
 # Data handeling
-matplotlib==3.6.0
-numpy==1.23.3
-pandas==1.5.0
-scipy==1.9.1
-SQLAlchemy==1.4.41
+matplotlib
+numpy
+pandas
+scipy
+SQLAlchemy
 
 # User interface
-streamlit==1.13.0
-streamlit-option-menu==0.3.2
+streamlit
+-e git+https://github.com/erdieee/analyzef1.git@cbb22a3b669ec3ec8091650943f2da3e9465ede7#egg=analyzef1

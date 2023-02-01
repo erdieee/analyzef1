@@ -63,6 +63,11 @@ function updateenv() {
         echo "Failed installing dependencies"
         exit 1
     fi
+    ${PYTHON} -m pip install -e .
+    if [ $? -ne 0 ]; then
+        echo "Failed installing analyf1"
+        exit 1
+    fi
     echo "pip install completed"
 }
 

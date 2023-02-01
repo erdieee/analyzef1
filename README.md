@@ -36,5 +36,5 @@ Whenever you want to run the script you need to activate the virtual enviroment 
 # activate your virtual enviroment (in Windows: .env/Scripts/activate.bat)
 source .env/bin/activate
 # run it
-python3 analyzef1
+analyzef1
 ```
