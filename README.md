@@ -38,3 +38,6 @@ source .env/bin/activate
 # run it
 analyzef1
 ```
+
+You can also check the deployed website under
+- [Deployment](https://erdieee-analyzef1-analyzef1home-s0fx45.streamlit.app/)
