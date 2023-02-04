@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 DB_PATH = f"{Path().resolve()}/database"
 DB_URL = f"sqlite:////{DB_PATH}/Season_{datetime.now().year}.sqlite"
 
+
 def init_db() -> None:
     """
     Initialize the database with tables Season and SessionResult.
@@ -25,4 +26,4 @@ def init_db() -> None:
     SessionResult.query = Season._db_session.query_property()
 
     _DECL_BASE.metadata.create_all(engine)
-    logger.info(f'Using database Season_{datetime.now().year}.sqlite')
+    logger.info(f"Using database Season_{datetime.now().year}.sqlite")

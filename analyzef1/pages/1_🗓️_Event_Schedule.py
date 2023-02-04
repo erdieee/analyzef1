@@ -9,13 +9,14 @@ from utils import set_page_config
 
 logger = logging.getLogger(__name__)
 
+
 def app() -> None:
     set_page_config()
-    st.title(f'Event Schedule Season {datetime.now().year}')
-    logger.info(f'Currently in page {__file__}')
+    st.title(f"Event Schedule Season {datetime.now().year}")
+    logger.info(f"Currently in page {__file__}")
 
     next_event, upcoming_events, past_events = DataHandler.get_upcoming_events()
-    event_schedule = st.tabs(['Next Event', 'Upcoming Events', 'Previous Events'])
+    event_schedule = st.tabs(["Next Event", "Upcoming Events", "Previous Events"])
 
     with event_schedule[0]:
         st.write("Next Event")
@@ -28,5 +29,6 @@ def app() -> None:
     with event_schedule[2]:
         st.write("Past Events this season")
         st.dataframe(past_events)
+
 
 app()
