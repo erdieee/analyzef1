@@ -2,8 +2,13 @@
 """
 Main analyzef1 script
 """
-
+import logging
 import subprocess
+from pathlib import Path
+
+import fastf1 as ff1
+
+logger = logging.getLogger("analyzef1")
 
 
 def main():
@@ -12,4 +17,8 @@ def main():
 
 
 if __name__ == "__main__":
+    cachefolder = f"{Path().resolve()}/cache"
+    Path(cachefolder).mkdir(parents=True, exist_ok=True)
+    ff1.Cache.enable_cache(cachefolder)
+    logger.info(f"Using cache folder: {cachefolder}")
     main()
