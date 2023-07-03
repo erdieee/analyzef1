@@ -20,8 +20,8 @@ def get_race_schedule(year, _ergast):
 
 
 @st.cache_data
-def get_driver_season_leaderbord(races, year, _ergast):
-    results = DataHandler.get_driver_season_leaderbord(races, year, _ergast)
+def get_driver_season_leaderbord(_races, year, _ergast):
+    results = DataHandler.get_driver_season_leaderbord(_races, year, _ergast)
     return results
 
 
@@ -69,7 +69,8 @@ def app() -> None:
             fig.update_layout(xaxis=dict(side="top"))  # x-axis on top
             fig.update_layout(margin=dict(l=0, r=0, b=0, t=0))  # Remove border margins
             st.plotly_chart(fig)
-        except:
+        except Exception as e:
+            logger.warning(e)
             st.info(f"Could not load data for year: {year}")
     with standings[1]:
         st.info("Not implemented")
