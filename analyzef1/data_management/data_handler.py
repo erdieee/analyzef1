@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -93,3 +93,45 @@ class DataHandler:
         if type == "past":
             return past_events
         return next_event, upcoming_event, past_events
+
+    @staticmethod
+    def get_driver_season_leaderbord(races, year, ergast):
+        results = []
+        now = datetime.today() - timedelta(days=1)
+        print(now)
+        # For each race in the season
+        for rnd, race in races["raceName"].items():
+            # print(rnd)
+            if races.loc[rnd, "raceDate"] > now:
+                break
+            # Get results. Note that we use the round no. + 1, because the round no.
+            # starts from one (1) instead of zero (0)
+            try:
+                temp = ergast.get_race_results(season=year, round=rnd + 1)
+                temp = temp.content[0]
+            except:
+                break
+            # If there is a sprint, get the results as well
+            sprint = ergast.get_sprint_results(season=year, round=rnd + 1)
+            if sprint.content and sprint.description["round"][0] == rnd + 1:
+                temp = pd.merge(temp, sprint.content[0], on="driverCode", how="left")
+                # Add sprint points and race points to get the total
+                temp["points"] = temp["points_x"] + temp["points_y"]
+                temp.drop(columns=["points_x", "points_y"], inplace=True)
+
+            # Add round no. and grand prix name
+            temp["round"] = rnd + 1
+            temp["race"] = race.removesuffix(" Grand Prix")
+            temp = temp[["round", "race", "driverCode", "points"]]  # Keep useful cols.
+            results.append(temp)
+
+        # Append all races into a single dataframe
+        results = pd.concat(results)
+        races = results["race"].drop_duplicates()
+        results = results.pivot(index="driverCode", columns="round", values="points")
+        # Rank the drivers by their total points
+        results["total_points"] = results.sum(axis=1)
+        results = results.sort_values(by="total_points", ascending=False)
+        results.drop(columns="total_points", inplace=True)
+        results.columns = races
+        return results

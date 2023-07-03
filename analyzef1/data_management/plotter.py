@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import Any, List
 
 import fastf1
 import fastf1.plotting
@@ -166,7 +166,7 @@ class Plotter:
 
         return fig
 
-    def colormap_map_speed(self, driver: str):
+    def colormap_map_speed(self, driver: Any):
         session = self.session
         colormap = mpl.cm.plasma
         event_name = session.event["EventName"]
@@ -217,7 +217,7 @@ class Plotter:
 
         return fig
 
-    def colormap_map_gear_shifts(self, driver: str):
+    def colormap_map_gear_shifts(self, driver: Any):
         session = self.session
         event_name = session.event["EventName"]
         lap = session.laps.pick_driver(driver).pick_fastest()
