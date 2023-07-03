@@ -7,7 +7,7 @@ import plotly.express as px
 from plotly.io import show
 
 from analyzef1.data_management import DataHandler
-from analyzef1.utils import set_page_config, team_leaderboard_from_drivers
+from analyzef1.utils import set_page_config
 
 
 logger = logging.getLogger(__name__)
@@ -20,22 +20,29 @@ def get_race_schedule(year, _ergast):
 
 
 @st.cache_data
-def get_driver_season_leaderbord(_races, year, _ergast):
-    results = DataHandler.get_driver_season_leaderbord(_races, year, _ergast)
+def get_driver_season_standings(_races, year, _ergast):
+    results = DataHandler.get_driver_season_standings(_races, year, _ergast)
+    return results
+
+
+@st.cache_data
+def get_constructor_season_standings(_races, year, _ergast):
+    results = DataHandler.get_constructor_season_standings(_races, year, _ergast)
     return results
 
 
 def app() -> None:
     set_page_config()
-    options = range(2018, datetime.today().year + 1)
-    year = st.selectbox("Select year", options, index=len(options) - 1)
+    st.title("Leaderboard")
+    options = [*range(2005, datetime.today().year + 1)]
+    year = st.selectbox("Select year", reversed(options), index=0)
     standings = st.tabs(["Driver", "Team"])
 
     ergast = Ergast()
     races = get_race_schedule(year, ergast)  # Races in year 2022
     with standings[0]:
         try:
-            results = get_driver_season_leaderbord(races, year, ergast)
+            results = get_driver_season_standings(races, year, ergast)
             fig = px.imshow(
                 results,
                 text_auto=True,
@@ -73,7 +80,12 @@ def app() -> None:
             logger.warning(e)
             st.info(f"Could not load data for year: {year}")
     with standings[1]:
-        st.info("Not implemented")
+        # try:
+        #     # results = get_constructor_season_standings(races, year, ergast)
+        #     st.dataframe(results)
+        # except Exception as e:
+        #     logger.warning(e)
+        st.info("Not implemented yet .. ")
 
 
 app()

@@ -12,6 +12,8 @@ from fastf1.core import Laps
 from matplotlib.collections import LineCollection
 from timple.timedelta import strftimedelta
 
+from analyzef1.data_management.data_handler import DataHandler
+
 logger = logging.getLogger(__name__)
 
 
@@ -20,12 +22,8 @@ class Plotter:
     Class responsable for creating all graphics
     """
 
-    def __init__(self, data_handler, session) -> None:
-        self.data_handler = data_handler
-        self.session = session
-
-    def plot_drivers_fastest_laps(self):
-        session = self.session
+    @staticmethod
+    def plot_drivers_fastest_laps(session):
         drivers = pd.unique(session.laps["Driver"])
         list_fastest_laps = list()
         team_colors = list()
@@ -65,9 +63,9 @@ class Plotter:
         )
         return fig
 
-    def boxplot_drivers_laps(self):
-        laps = self.data_handler.get_drivers_laps()
-        session = self.session
+    @staticmethod
+    def boxplot_drivers_laps(session):
+        laps = DataHandler.get_drivers_laps(session)
         eventname = session.event["EventName"]
         driver_laps = []
         driver = []
@@ -110,9 +108,9 @@ class Plotter:
 
         return fig
 
-    def racepace_laps(self):
-        laps = self.data_handler.get_drivers_laps()
-        session = self.session
+    @staticmethod
+    def racepace_laps(session):
+        laps = DataHandler.get_drivers_laps(session)
         eventname = session.event["EventName"]
         driver_name = []
         length_race = []
@@ -166,8 +164,8 @@ class Plotter:
 
         return fig
 
-    def colormap_map_speed(self, driver: Any):
-        session = self.session
+    @staticmethod
+    def colormap_map_speed(session, driver: Any):
         colormap = mpl.cm.plasma
         event_name = session.event["EventName"]
         lap = session.laps.pick_driver(driver).pick_fastest()
@@ -217,8 +215,8 @@ class Plotter:
 
         return fig
 
-    def colormap_map_gear_shifts(self, driver: Any):
-        session = self.session
+    @staticmethod
+    def colormap_map_gear_shifts(session, driver: Any):
         event_name = session.event["EventName"]
         lap = session.laps.pick_driver(driver).pick_fastest()
         tel = lap.get_telemetry()
@@ -258,79 +256,59 @@ class Plotter:
         cbar.set_ticklabels(np.arange(1, 9))
         return fig
 
-    def compare_2_drv_lap(self, drivers: List, lapnumber: int):
-        session = self.session
-        laps = session.load_laps(with_telemetry=True)
+    @staticmethod
+    def driver_position_during_race(session):
+        fig, ax = plt.subplots(figsize=(8.0, 4.9))
+        for drv in session.drivers:
+            drv_laps = session.laps.pick_driver(drv)
+
+            abb = drv_laps["Driver"].iloc[0]
+            color = fastf1.plotting.driver_color(abb)
+
+            ax.plot(drv_laps["LapNumber"], drv_laps["Position"], label=abb, color=color)
+        ax.set_ylim([20.5, 0.5])
+        ax.set_yticks([1, 5, 10, 15, 20])
+        ax.set_xlabel("Lap")
+        ax.set_ylabel("Position")
+        ax.legend(bbox_to_anchor=(1.0, 1.02))
+        plt.tight_layout()
+        return fig
+
+    @staticmethod
+    def compare_2_drv_lap(session, drivers: List, lapnumber: int):
+        laps = session.laps
         laps_driver_1 = laps.pick_driver(drivers[0])
         laps_driver_2 = laps.pick_driver(drivers[1])
-        laps_driver_1["RaceLapNumber"] = laps_driver_1["LapNumber"] - 1
-        laps_driver_2["RaceLapNumber"] = laps_driver_2["LapNumber"] - 1
         lap_telemetry_driver_1 = (
-            laps_driver_1.loc[laps_driver_1["RaceLapNumber"] == lapnumber]
+            laps_driver_1.loc[laps_driver_1["LapNumber"] == lapnumber + 1]
             .get_car_data()
             .add_distance()
         )
         lap_telemetry_driver_2 = (
-            laps_driver_2.loc[laps_driver_2["RaceLapNumber"] == lapnumber]
+            laps_driver_2.loc[laps_driver_2["LapNumber"] == lapnumber + 1]
             .get_car_data()
             .add_distance()
         )
+
         plt.rcParams["figure.figsize"] = [15, 15]
         fig, ax = plt.subplots(4)
         fig.suptitle(
             f"Lap {lapnumber} Telemetry Comparison between {drivers[0]} and {drivers[1]}"
         )
 
-        ax[0].plot(
-            lap_telemetry_driver_1["Distance"],
-            lap_telemetry_driver_1["Speed"],
-            label=drivers[0],
-        )
-        ax[0].plot(
-            lap_telemetry_driver_2["Distance"],
-            lap_telemetry_driver_2["Speed"],
-            label=drivers[1],
-        )
+        telemetry = [lap_telemetry_driver_1, lap_telemetry_driver_2]
+        types = ["Speed", "Throttle", "Brake", "DRS"]
+
+        for i, desc in enumerate(types):
+            for j, tel in enumerate(telemetry):
+                ax[i].plot(tel["Distance"], tel[desc], label=drivers[j])
+
+        ax[0].legend()
         ax[0].set(ylabel="Speed [km/h]")
-        ax[0].legend(loc="lower right")
-
-        ax[1].plot(
-            lap_telemetry_driver_1["Distance"],
-            lap_telemetry_driver_1["Throttle"],
-            label=drivers[0],
-        )
-        ax[1].plot(
-            lap_telemetry_driver_2["Distance"],
-            lap_telemetry_driver_2["Throttle"],
-            label=drivers[1],
-        )
         ax[1].set(ylabel="Throttle in %")
-
-        ax[2].plot(
-            lap_telemetry_driver_1["Distance"],
-            lap_telemetry_driver_1["Brake"],
-            label=drivers[0],
-        )
-        ax[2].plot(
-            lap_telemetry_driver_2["Distance"],
-            lap_telemetry_driver_2["Brake"],
-            label=drivers[1],
-        )
         ax[2].set(ylabel="Brakes in %")
-
-        ax[3].plot(
-            lap_telemetry_driver_1["Distance"],
-            lap_telemetry_driver_1["DRS"],
-            label=drivers[0],
-        )
-        ax[3].plot(
-            lap_telemetry_driver_2["Distance"],
-            lap_telemetry_driver_2["DRS"],
-            label=drivers[1],
-        )
         ax[3].set(ylabel="DRS")
         ax[3].set(xlabel="Distance [m]")
-
         # Set Ticks Distance to 500m, grid visible
         for i in range(len(ax)):
             ax[i].set(xticks=np.arange(0, max(lap_telemetry_driver_1["Distance"]), 500))

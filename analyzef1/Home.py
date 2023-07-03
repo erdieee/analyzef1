@@ -11,7 +11,7 @@ import streamlit as st
 
 from utils import set_page_config
 
-logger = logging.getLogger("analyzef1")
+logger = logging.getLogger(__name__)
 
 LOGFORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.INFO, format=LOGFORMAT)
@@ -23,7 +23,7 @@ def main() -> None:
     col1, col2 = st.columns([2, 2])
     col1.image(f"{Path().resolve()}/images/background/backgroundcrop.jpeg")
     col2.title("Analyze F1 🏎️")
-    col2.write("For all the F1 appassionates.")
+    col2.write("For all the F1 nerds.")
     st.markdown("---")
     st.write("Just a math student enjoying data")
 
