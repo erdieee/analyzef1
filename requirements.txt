@@ -5,6 +5,7 @@ fastf1
 matplotlib
 numpy
 pandas
+plotly
 scipy
 SQLAlchemy
 
