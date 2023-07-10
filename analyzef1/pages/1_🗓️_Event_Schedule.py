@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import streamlit as st
 from analyzef1.data_management import DataHandler
@@ -10,9 +10,19 @@ logger = logging.getLogger(__name__)
 
 
 @st.cache_data
-def get_schedule():
+def get_schedule(reload):
     next_event, upcoming_events, past_events = DataHandler.get_upcoming_events()
     return next_event, upcoming_events, past_events
+
+
+def should_reload():
+    """
+    Gets date of next monday. Used to check if standings should be reloaded
+    """
+    todayDate = datetime.today()
+    # Increment today's date with 1 week to get the next Monday
+    nextMonday = todayDate + timedelta(days=-todayDate.weekday(), weeks=1)
+    return nextMonday
 
 
 def events(events, type=None):
@@ -48,8 +58,8 @@ def app() -> None:
     set_page_config()
     st.title(f"Event Schedule Season {datetime.now().year}")
     logger.info(f"Currently in page {__file__}")
-
-    next_event, upcoming_events, past_events = get_schedule()
+    reload_check = should_reload()
+    next_event, upcoming_events, past_events = get_schedule(reload_check)
     event_schedule = st.tabs(["Next Event", "Upcoming Events", "Previous Events"])
 
     with event_schedule[0]:

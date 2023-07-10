@@ -93,22 +93,16 @@ class DataHandler:
         results = []
         for rnd, race in races["raceName"].items():
             try:
-                temp = ergast.get_race_results(season=year, round=rnd + 1)
+                temp = ergast.get_constructor_standings(season=year, round=rnd + 1)
                 temp = temp.content[0]
             except:
                 break
-            # If there is a sprint, get the results as well
-            sprint = ergast.get_sprint_results(season=year, round=rnd + 1)
-            if sprint.content and sprint.description["round"][0] == rnd + 1:
-                temp = pd.merge(temp, sprint.content[0], on="driverCode", how="left")
-                temp["points"] = temp["points_x"] + temp["points_y"]
-                temp.drop(columns=["points_x", "points_y"], inplace=True)
             temp["round"] = rnd + 1
-            temp["race"] = race.removesuffix(" Grand Prix")
-            temp = temp[["round", "race", "driverCode", "points"]]
             results.append(temp)
 
         results = pd.concat(results)
-        races = results["race"].drop_duplicates()
-        results = results.pivot(index="driverCode", columns="round", values="points")
+        results = results.pivot(
+            index="constructorName", columns="round", values="points"
+        )
+        results = results.sort_values(results.columns[-1], ascending=False)
         return results
