@@ -44,7 +44,7 @@ def choose_session() -> Dict:
     col1, col2, col3 = st.columns(3)
     options = get_session_options()
     year_input = col1.selectbox(
-        label="Choose year", options=(year := options["year"]), index=len(year) - 1
+        label="Choose year", options=(year := reversed(options["year"])), index=0
     )
     event_input = col2.selectbox(
         label="Choose Location", options=options["events"][year_input]
@@ -81,53 +81,63 @@ def app() -> None:
     st.title(f"Analyze Previous Session")
     st.subheader("Choose Session")
     data = choose_session()
-    session = load_session(data)
-    st.subheader("Choose analytics")
-    analyze_session = st.tabs(
-        ["Compare 2 Drivers", "All Laps", "Color Map", "Race infos"]
-    )
-    drivers = session.results["Abbreviation"].tolist()
-    with analyze_session[0]:
-        col1, col2, col3 = st.columns([1, 1, 2])
-        driver_1 = col1.selectbox("First Driver", drivers)
-        driver_2 = col2.selectbox("Second Driver", drivers, index=1)
-        drivers_list = [driver_1, driver_2]
-        max_lap_number = session.total_laps
-        lapnumber = col3.slider(
-            label="Select Lap", min_value=1, max_value=max_lap_number, value=1
+    try:
+        session = load_session(data)
+    except Exception as e:
+        logger.warning(e)
+        st.info(
+            f"Could not load session. Retry in a few minutes if the session just finished."
         )
-        try:
-            st.pyplot(Plotter.compare_2_drv_lap(session, drivers_list, lapnumber))
-        except Exception as e:
-            logger.warning(e)
-            st.write("Data not available for both drivers...")
-
-    with analyze_session[1]:
-        st.pyplot(Plotter.driver_position_during_race(session))
-        st.write(Plotter.boxplot_drivers_laps(session))
-        st.write(Plotter.plot_drivers_fastest_laps(session))
-        # st.write(Plotter.racepace_laps(session))
-
-    with analyze_session[2]:
-        col1, col2 = st.columns(2)
-        color_map_switch = col1.selectbox(
-            label="Choose Color Map", options=["Speed", "Gear Shifts"]
+    else:
+        st.subheader("Choose analytics")
+        analyze_session = st.tabs(
+            ["Compare Drivers", "All Laps", "Color Map", "Strategy", "Race info"]
         )
-        driver_select = col2.selectbox("Select Driver", drivers)
-        if color_map_switch == "Speed":
+        drivers = session.results["Abbreviation"].tolist()
+        with analyze_session[0]:
+            col1, col2, col3 = st.columns([1, 1, 2])
+            driver_1 = col1.selectbox("First Driver", drivers)
+            driver_2 = col2.selectbox("Second Driver", drivers, index=1)
+            drivers_list = [driver_1, driver_2]
+            max_lap_number = session.total_laps
+            lapnumber = col3.slider(
+                label="Select Lap", min_value=1, max_value=max_lap_number, value=1
+            )
             try:
-                st.write(Plotter.colormap_map_speed(session, driver_select))
-            except:
-                st.write("No Data available...")
+                st.pyplot(Plotter.compare_2_drv_lap(session, drivers_list, lapnumber))
+            except Exception as e:
+                logger.warning(e)
+                st.write("Data not available for both drivers...")
 
-        if color_map_switch == "Gear Shifts":
-            try:
-                st.write(Plotter.colormap_map_gear_shifts(session, driver_select))
-            except:
-                st.write("No Data available...")
+        with analyze_session[1]:
+            st.pyplot(Plotter.driver_position_during_race(session))
+            st.write(Plotter.boxplot_drivers_laps(session))
+            st.write(Plotter.plot_drivers_fastest_laps(session))
+            # st.write(Plotter.racepace_laps(session))
 
-    with analyze_session[3]:
-        race_info(session)
+        with analyze_session[2]:
+            col1, col2 = st.columns(2)
+            color_map_switch = col1.selectbox(
+                label="Choose Color Map", options=["Speed", "Gear Shifts"]
+            )
+            driver_select = col2.selectbox("Select Driver", drivers)
+            if color_map_switch == "Speed":
+                try:
+                    st.write(Plotter.colormap_map_speed(session, driver_select))
+                except:
+                    st.write("No Data available...")
+
+            if color_map_switch == "Gear Shifts":
+                try:
+                    st.write(Plotter.colormap_map_gear_shifts(session, driver_select))
+                except:
+                    st.write("No Data available...")
+
+        with analyze_session[3]:
+            st.pyplot(Plotter.tyre_strategy(session, data["year"], data["event"]))
+
+        with analyze_session[4]:
+            race_info(session)
 
 
 app()
