@@ -110,9 +110,13 @@ def app() -> None:
                 st.write("Data not available for both drivers...")
 
         with analyze_session[1]:
-            st.pyplot(Plotter.driver_position_during_race(session))
+            if data["event_type"] == "Race":
+                st.pyplot(Plotter.driver_position_during_race(session))
             st.write(Plotter.boxplot_drivers_laps(session))
-            st.write(Plotter.plot_drivers_fastest_laps(session))
+            try:
+                st.write(Plotter.plot_drivers_fastest_laps(session))
+            except Exception as e:
+                logger.warning(e)
             # st.write(Plotter.racepace_laps(session))
 
         with analyze_session[2]:
@@ -124,13 +128,15 @@ def app() -> None:
             if color_map_switch == "Speed":
                 try:
                     st.write(Plotter.colormap_map_speed(session, driver_select))
-                except:
+                except Exception as e:
+                    logger.warning(e)
                     st.write("No Data available...")
 
             if color_map_switch == "Gear Shifts":
                 try:
                     st.write(Plotter.colormap_map_gear_shifts(session, driver_select))
-                except:
+                except Exception as e:
+                    logger.warning(e)
                     st.write("No Data available...")
 
         with analyze_session[3]:
